@@ -8,15 +8,13 @@ use Tests\TestCase;
 
 class BlogViewControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
+    /** @test index */
+    public function ブログのTOPページを開ける()
     {
-        $response = $this->get('/');
+        // $this->withoutExceptionHandling(); // エラー内容を表示できる（）
 
-        $response->assertStatus(200);
+        $response = $this->get('/');
+        $response->assertOk(); // ステータスコードが200かどうか
     }
+
 }
