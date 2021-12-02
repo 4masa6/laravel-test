@@ -27,7 +27,10 @@ class BlogViewControllerTest extends TestCase
             ->assertOk() // ステータスコードが200かどうか
             ->assertSee($blog1->title) // レスポンスにブログのタイトルが含まれているか
             ->assertSee($blog2->title) // レスポンスにブログのタイトルが含まれているか
-            ->assertSee($blog3->title); // レスポンスにブログのタイトルが含まれているか
+            ->assertSee($blog3->title) // レスポンスにブログのタイトルが含まれているか
+            ->assertSee($blog1->user->name) // レスポンスにユーザーの名前が含まれているか
+            ->assertSee($blog2->user->name) // レスポンスにユーザーの名前が含まれているか
+            ->assertSee($blog3->user->name); // レスポンスにユーザーの名前が含まれているか
     }
 
 }
