@@ -19,9 +19,9 @@ class BlogViewControllerTest extends TestCase
          $this->withoutExceptionHandling(); // エラー内容を表示できる（）
 
         // DBにブログが登録されている場合、トップページを開くと、ブログのタイトル一覧が表示されていることを表現する
-        $blog1 = Blog::factory()->create();
-        $blog2 = Blog::factory()->create();
-        $blog3 = Blog::factory()->create();
+        $blog1 = Blog::factory()->hasComments(1)->create(); // リレーションされている時、->has◯◯()でコメント付きのブログを作成できる
+        $blog2 = Blog::factory()->hasComments(2)->create();
+        $blog3 = Blog::factory()->hasComments(3)->create();
 
         $this->get('/')
             ->assertOk() // ステータスコードが200かどうか
@@ -30,7 +30,10 @@ class BlogViewControllerTest extends TestCase
             ->assertSee($blog3->title) // レスポンスにブログのタイトルが含まれているか
             ->assertSee($blog1->user->name) // レスポンスにユーザーの名前が含まれているか
             ->assertSee($blog2->user->name) // レスポンスにユーザーの名前が含まれているか
-            ->assertSee($blog3->user->name); // レスポンスにユーザーの名前が含まれているか
+            ->assertSee($blog3->user->name) // レスポンスにユーザーの名前が含まれているか
+            ->assertSee("(1件のコメント)") // レスポンスにユーザーの名前が含まれているか
+            ->assertSee("(2件のコメント)") // レスポンスにユーザーの名前が含まれているか
+            ->assertSee("(3件のコメント)"); // レスポンスにユーザーの名前が含まれているか
     }
 
 }
