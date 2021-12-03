@@ -16,24 +16,31 @@ class BlogViewControllerTest extends TestCase
     /** @test index */
     public function ブログのTOPページを開ける()
     {
-         $this->withoutExceptionHandling(); // エラー内容を表示できる（）
+//         $this->withoutExceptionHandling(); // エラー内容を表示できる（）
 
         // DBにブログが登録されている場合、トップページを開くと、ブログのタイトル一覧が表示されていることを表現する
         $blog1 = Blog::factory()->hasComments(1)->create(); // リレーションされている時、->has◯◯()でコメント付きのブログを作成できる
-        $blog2 = Blog::factory()->hasComments(2)->create();
-        $blog3 = Blog::factory()->hasComments(3)->create();
+        $blog2 = Blog::factory()->hasComments(3)->create();
+        $blog3 = Blog::factory()->hasComments(2)->create();
 
         $this->get('/')
-            ->assertOk() // ステータスコードが200かどうか
-            ->assertSee($blog1->title) // レスポンスにブログのタイトルが含まれているか
-            ->assertSee($blog2->title) // レスポンスにブログのタイトルが含まれているか
-            ->assertSee($blog3->title) // レスポンスにブログのタイトルが含まれているか
-            ->assertSee($blog1->user->name) // レスポンスにユーザーの名前が含まれているか
-            ->assertSee($blog2->user->name) // レスポンスにユーザーの名前が含まれているか
-            ->assertSee($blog3->user->name) // レスポンスにユーザーの名前が含まれているか
-            ->assertSee("(1件のコメント)") // レスポンスにユーザーの名前が含まれているか
-            ->assertSee("(2件のコメント)") // レスポンスにユーザーの名前が含まれているか
-            ->assertSee("(3件のコメント)"); // レスポンスにユーザーの名前が含まれているか
+            // ステータスコードが200かどうか
+            ->assertOk()
+            // レスポンスにブログのタイトルが含まれているか
+            ->assertSee($blog1->title)
+            ->assertSee($blog2->title)
+            ->assertSee($blog3->title)
+            // レスポンスにユーザーの名前が含まれているか
+            ->assertSee($blog1->user->name)
+            ->assertSee($blog2->user->name)
+            ->assertSee($blog3->user->name)
+            // レスポンスにユーザーの名前が含まれているか
+            ->assertSee("(1件のコメント)")
+            ->assertSee("(2件のコメント)")
+            ->assertSee("(3件のコメント)")
+            // コメントの多い順に並んでいるか
+            ->assertSeeInOrder([$blog2->title, $blog3->title, $blog1->title])
+        ;
     }
 
 }
