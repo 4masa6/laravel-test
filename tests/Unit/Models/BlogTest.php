@@ -29,4 +29,27 @@ class BlogTest extends TestCase
         $blog = Blog::factory()->create();
         $this->assertInstanceOf(Collection::class, $blog->comments); // Illuminate/Database/Colectionを返すか
     }
+
+    /** @test scopeOnlyOpen */
+    public function ブログの公開・非公開のスコープ()
+    {
+        // 準備
+        $blog1 = Blog::factory()->create(
+            [
+                'status' => Blog::CLOSE,
+                'title'  => 'ブログA'
+            ]
+        );
+        $blog2 = Blog::factory()->create(['title' => 'ブログB']);
+        $blog3 = Blog::factory()->create(['title' => 'ブログC']);
+
+        // 今回のテストの目的
+        // モデルスコープが正しく動作しているか
+        $blogs = Blog::OnlyOpen()->get();
+
+        $this->assertFalse($blogs->contains($blog1)); // 非公開が含まれていないことを確認
+        $this->assertTrue($blogs->contains($blog2)); // 公開が含まれていることを確認
+        $this->assertTrue($blogs->contains($blog3)); // 公開が含まれていることを確認
+        // コレクションモデルのcontainsメソッドで含まれているかをチェックできる
+    }
 }

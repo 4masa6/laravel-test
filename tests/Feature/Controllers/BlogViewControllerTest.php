@@ -43,4 +43,25 @@ class BlogViewControllerTest extends TestCase
         ;
     }
 
+    /** @test index */
+    public function 非公開の記事は表示されない()
+    {
+        // 準備
+        Blog::factory()->create([
+            'status' => Blog::CLOSE,
+            'title' => 'ブログA'
+        ]);
+        Blog::factory()->create(['title' => 'ブログB']);
+        Blog::factory()->create(['title' => 'ブログC']);
+
+        $this->get('/')
+            // ステータスコードが200かどうか
+            ->assertOk()
+            // レスポンスにブログのタイトルが含まれていないことを確認
+            ->assertDontSee('ブログA')
+            // レスポンスにブログのタイトルが含まれているか
+            ->assertSee('ブログB')
+            ->assertSee('ブログC');
+    }
+
 }

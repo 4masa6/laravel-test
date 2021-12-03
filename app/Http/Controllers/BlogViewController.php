@@ -9,6 +9,8 @@ class BlogViewController extends Controller
 {
     public function index() {
         $blogs = Blog::with('user')
+//            ->where('status', Blog::OPEN)
+            ->OnlyOpen()
             ->withCount('comments')
             ->orderByDesc('comments_count')
             ->get();
