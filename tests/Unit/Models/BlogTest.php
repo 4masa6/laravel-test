@@ -34,9 +34,8 @@ class BlogTest extends TestCase
     public function ブログの公開・非公開のスコープ()
     {
         // 準備
-        $blog1 = Blog::factory()->create(
+        $blog1 = Blog::factory()->closed()->create(
             [
-                'status' => Blog::CLOSE,
                 'title'  => 'ブログA'
             ]
         );
@@ -51,5 +50,16 @@ class BlogTest extends TestCase
         $this->assertTrue($blogs->contains($blog2)); // 公開が含まれていることを確認
         $this->assertTrue($blogs->contains($blog3)); // 公開が含まれていることを確認
         // コレクションモデルのcontainsメソッドで含まれているかをチェックできる
+    }
+
+    /** @test isClosed */
+    public function 非公開記事はtrueを返し、公開記事はfalseを返す()
+    {
+        // モデルのインスタンスメソッドの確認なので、DBに保存する必要がない場合はcreateではなくmakeを使うとよい
+        $blog = Blog::factory()->make(); // 公開記事
+        $this->assertFalse($blog->isClosed()); // Falseになることを確認
+
+        $blog = Blog::factory()->closed()->make(); // 非公開記事
+        $this->assertTrue($blog->isClosed()); // Trueになることを確認
     }
 }

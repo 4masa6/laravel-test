@@ -10,7 +10,7 @@ class Blog extends Model
     use HasFactory;
 
     const OPEN = 1;
-    const CLOSE = 0;
+    const CLOSED = 0;
 
     public function user() {
         return $this->belongsTo(User::class);
@@ -24,5 +24,9 @@ class Blog extends Model
     // 公開非公開を判定する
     public function scopeOnlyOpen($query) {
         return $query->where('status', self::OPEN);
+    }
+
+    public function isClosed() {
+        return $this->status == self::CLOSED;
     }
 }

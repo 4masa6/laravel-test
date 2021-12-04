@@ -30,4 +30,12 @@ class BlogFactory extends Factory
             ];
         });
     }
+
+    public function closed() {
+        return $this->state(function (array $attributes) {
+            return [
+                'status' => Blog::CLOSED,
+            ];
+        });
+    }
 }

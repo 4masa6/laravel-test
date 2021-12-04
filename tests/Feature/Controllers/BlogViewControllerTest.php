@@ -46,9 +46,10 @@ class BlogViewControllerTest extends TestCase
     /** @test index */
     public function 非公開の記事は表示されない()
     {
+//         $this->withoutExceptionHandling(); // エラー内容を表示できる（）
+
         // 準備
-        Blog::factory()->create([
-            'status' => Blog::CLOSE,
+        Blog::factory()->closed()->create([
             'title' => 'ブログA'
         ]);
         Blog::factory()->create(['title' => 'ブログB']);
@@ -62,6 +63,35 @@ class BlogViewControllerTest extends TestCase
             // レスポンスにブログのタイトルが含まれているか
             ->assertSee('ブログB')
             ->assertSee('ブログC');
+    }
+
+    /** @test show */
+    public function ブログの詳細画面が表示できる()
+    {
+        // 記事を１件準備
+        $blog = Blog::factory()->create();
+
+        // 記事の詳細ページにアクセス
+        $this->get('blogs/'.$blog->id)
+            // ページが開かれる
+            ->assertOk()
+            // ページにタイトルが含まれている
+            ->assertSee($blog->title)
+            // ページに投稿者の名前が含まれている
+            ->assertSee($blog->user->name);
+    }
+
+    /** @test show */
+    public function ブログで非公開のものは詳細画面を表示できない()
+    {
+//         $this->withoutExceptionHandling(); // エラー内容を表示できる（）
+
+        // 非公開の記事を１件作成
+        $blog = Blog::factory()->closed()->create();
+
+        // 記事の詳細ページにアクセスすると、403forbidden になることを確認
+        $this->get('blogs/'.$blog->id)
+            ->assertForbidden();
     }
 
 }
