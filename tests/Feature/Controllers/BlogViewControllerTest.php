@@ -3,6 +3,7 @@
 namespace Tests\Feature\Controllers;
 
 use App\Models\Blog;
+use App\Models\Comment;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -67,10 +68,33 @@ class BlogViewControllerTest extends TestCase
     }
 
     /** @test show */
-    public function ブログの詳細画面が表示できる()
+    public function ブログの詳細画面が表示でき、コメントが古い順に表示される()
     {
         // 記事を１件準備
-        $blog = Blog::factory()->create();
+        // コメントを同時に作成する関数をfactoryに用意する
+        $blog = Blog::factory()->withCommentsData([
+                ['created_at' => now()->sub('2 days'), 'name' => '太郎'],
+                ['created_at' => now()->sub('3 days'), 'name' => '次郎'],
+                ['created_at' => now()->sub('1 days'), 'name' => '三郎']
+            ])->create();
+
+        // ↑↑ コールバック関数を使ってリファクタできる
+        // $blog = Blog::factory()->create();
+        // Comment::factory()->create([
+        //     'created_at' => now()->sub('2 days'),
+        //     'name' => '太郎',
+        //     'blog_id' => $blog->id,
+        // ]);
+        // Comment::factory()->create([
+        //     'created_at' => now()->sub('3 days'),
+        //     'name' => '次郎',
+        //     'blog_id' => $blog->id,
+        // ]);
+        // Comment::factory()->create([
+        //     'created_at' => now()->sub('1 days'),
+        //     'name' => '三郎',
+        //     'blog_id' => $blog->id,
+        // ]);
 
         // 記事の詳細ページにアクセス
         $this->get('blogs/'.$blog->id)
@@ -79,7 +103,11 @@ class BlogViewControllerTest extends TestCase
             // ページにタイトルが含まれている
             ->assertSee($blog->title)
             // ページに投稿者の名前が含まれている
-            ->assertSee($blog->user->name);
+            ->assertSee($blog->user->name)
+            // コメントが古い順かどうか確認
+            ->assertSeeInOrder(['次郎', '太郎', '三郎'])
+        ;
+
     }
 
     /** @test show */
