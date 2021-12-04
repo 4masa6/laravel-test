@@ -3,6 +3,7 @@
 namespace Tests\Feature\Controllers;
 
 use App\Models\Blog;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -92,6 +93,21 @@ class BlogViewControllerTest extends TestCase
         // 記事の詳細ページにアクセスすると、403forbidden になることを確認
         $this->get('blogs/'.$blog->id)
             ->assertForbidden();
+    }
+
+    /** @test show */
+    public function クリスマスの日は「メリークリスマス」と表示される()
+    {
+        $blog = Blog::factory()->create();
+        Carbon::setTestNow('2020-12-24');
+        $this->get('blogs/'.$blog->id)
+            ->assertOk()
+            ->assertDontSee('メリークリスマス');
+
+        Carbon::setTestNow('2020-12-25');
+        $this->get('blogs/'. $blog->id)
+            ->assertOk()
+            ->assertSee('メリークリスマス');
     }
 
 }
