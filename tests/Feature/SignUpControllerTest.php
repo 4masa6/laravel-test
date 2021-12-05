@@ -27,7 +27,7 @@ class SignUpControllerTest extends TestCase
     /** @test store */
     public function ユーザー登録できる()
     {
-        $this->withoutExceptionHandling();
+//        $this->withoutExceptionHandling();
 
         // データ検証（入力チェック）
         // DBに保存
@@ -37,7 +37,7 @@ class SignUpControllerTest extends TestCase
         $validData = User::factory()->validData(); // Factoryに配列を返すメソッドを定義しておけばそのまま使い回せる
 
         $this->post('signup', $validData)
-            ->assertOk();
+            ->assertRedirect('mypage/blogs');
 
         // パスワードはハッシュ化されるので、unsetしておく
         unset($validData['password']);
@@ -49,6 +49,9 @@ class SignUpControllerTest extends TestCase
         $user = User::firstWhere($validData);
         $this->assertNotNull($user); // userが登録されているか
         $this->assertTrue(\Hash::check('abcd1234', $user->password)); // パスワードが正しいか
+
+        // ユーザーが認証されているかを確認
+        $this->assertAuthenticatedAs($user);
     }
 
     /** @test  store*/
