@@ -27,7 +27,7 @@ class SignUpControllerTest extends TestCase
     /** @test store */
     public function ユーザー登録できる()
     {
-        $this->withoutExceptionHandling();
+//        $this->withoutExceptionHandling();
         // ** データの準備 **
 
         // ** 実行 **
@@ -36,11 +36,8 @@ class SignUpControllerTest extends TestCase
         // DBに保存
         // ログインさせてからマイページにリダイレクト
 
-        $validData = [
-            'name' => '太郎',
-            'email' => 'aaa@bbb.net',
-            'password' => 'abcd1234',
-        ];
+//        $validData = User::factory()->valid()->raw(); // ->raw(); は make()->toArray(); と同義（インスタンスを作成して配列で取得）
+        $validData = User::factory()->validData(); // Factoryに配列を返すメソッドを定義しておけばそのまま使い回せる
 
         $this->post('signup', $validData)
             ->assertOk();
